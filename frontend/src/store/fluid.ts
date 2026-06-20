@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { SPHEngine, DEFAULT_PARAMS, PRESETS } from '../utils/sph-engine'
+import { runComparison } from '../utils/scenario-analyzer'
 import type { SimParams, Preset, Particle } from '../types'
+import type { ComparisonResult, AnalyzeProgress } from '../utils/scenario-analyzer'
 
 export const useFluidStore = defineStore('fluid', {
   state: () => ({
@@ -15,6 +17,9 @@ export const useFluidStore = defineStore('fluid', {
     _lastTime: 0,
     _fpsAccum: 0,
     _fpsFrames: 0,
+    comparisonResult: null as ComparisonResult | null,
+    isAnalyzing: false,
+    analysisProgress: null as AnalyzeProgress | null,
   }),
   getters: {
     particleArray: (state) => state.engine?.particles ?? [],
@@ -94,6 +99,20 @@ export const useFluidStore = defineStore('fluid', {
         if (key === 'smoothingRadius') {
           this.engine['cellSize'] = value
         }
+      }
+    },
+    async runComparison() {
+      if (this.isAnalyzing) return
+      this.isAnalyzing = true
+      this.comparisonResult = null
+      this.analysisProgress = null
+      try {
+        this.comparisonResult = await runComparison(PRESETS, (p) => {
+          this.analysisProgress = p
+        })
+      } finally {
+        this.isAnalyzing = false
+        this.analysisProgress = null
       }
     },
   },

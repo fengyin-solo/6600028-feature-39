@@ -4,6 +4,7 @@ import { useFluidStore } from './store/fluid'
 import { PRESETS } from './utils/sph-engine'
 import FluidCanvas from './components/FluidCanvas.vue'
 import ControlPanel from './components/ControlPanel.vue'
+import ScenarioComparison from './components/ScenarioComparison.vue'
 
 const store = useFluidStore()
 
@@ -22,9 +23,10 @@ onMounted(() => {
 
     <!-- Main Content -->
     <div class="flex flex-1 overflow-hidden p-4 gap-4">
-      <!-- Left: Canvas -->
-      <div class="flex-1 flex flex-col items-start gap-2">
+      <!-- Left: Canvas + Comparison -->
+      <div class="flex-1 flex flex-col gap-2 overflow-auto w-full max-w-[800px]">
         <FluidCanvas />
+        <ScenarioComparison />
       </div>
 
       <!-- Right: Controls -->
